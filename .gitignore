@@ -1,0 +1,38 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+build/
+dist/
+.venv/
+
+# audio
+*.wav
+*.flac
+*.mp3
+*.ogg
+*.m4a
+
+# model weights and arrays
+*.pt
+*.pth
+*.bin
+*.ckpt
+*.onnx
+*.joblib
+*.safetensors
+*.npy
+*.npz
+
+# data
+data/
+data_q/
+corpus_q/
+eval/runs/
+zipvoice_runs/
+lightning_logs/
+logs/
+*.log
+*.jsonl
+*.jsonl.gz
+*.parquet

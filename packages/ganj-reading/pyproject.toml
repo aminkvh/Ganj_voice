@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ganj-reading"
+version = "0.1.0"
+description = "Persian poetry reading rules: G2P with ezafe, harakat, tashdid and sukun rules, metre scansion, tokens"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "AGPL-3.0-or-later"}
+authors = [{name = "Amin Akbari"}]
+dependencies = []
+
+[project.optional-dependencies]
+g2p = ["torch", "transformers"]
+
+[project.urls]
+Homepage = "https://github.com/aminkvh/Ganj_voice"
+
+[tool.setuptools]
+packages = ["ganj_reading"]
+
+[tool.setuptools.package-data]
+ganj_reading = ["*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "--import-mode=importlib"
+markers = ["integration: needs GANJ_DATA and downloaded audio"]

@@ -1,0 +1,223 @@
+# Credits
+
+## The voice
+
+The voice prompt is built from a recitation by **امیرحسین عظیمی** (Amir Hossein Azimi), uploaded to Ganjoor.
+His clean, careful recording is why the voice sounds the way it does: the model's voice is close to his recording,
+disguised so that it is nobody's voice. His recordings were not used to train the model.
+
+## Ganjoor
+
+The poems and the training recitations come from **Ganjoor** (https://ganjoor.net, https://ava.ganjoor.net),
+used with Ganjoor's consent. Thank you to Ganjoor and to every reciter who shared their reading.
+
+## ManaTTS
+
+Prose training data: **ManaTTS** (https://huggingface.co/datasets/MahtaFetrat/Mana-TTS), released under CC0 1.0 by
+Nasl-e-Mana, the magazine of Iran's blind community.
+
+## Reciters whose recordings trained the model
+
+Hours of recitation used, under the names they uploaded with on Ganjoor.
+
+- فاطمه زندی — 41.8 h
+- نازنین بازیان — 37.8 h — http://t.me/nazi_27
+- عندلیب — 35.3 h — https://t.me/Satkani_Andalib
+- محسن لیله‌کوهی — 31.0 h — https://t.me/hafez_bekhanimm
+- حمیدرضا محمدی — 30.8 h — https://telegram.me/hrmoh
+- سهیل قاسمی — 29.8 h — https://setiq.com
+- مریم فقیهی کیا — 21.5 h — https://t.me/OnlineHafez
+- پری ساتکنی عندلیب — 16.7 h — https://t.me/Satkani_Andalib
+- محمدرضا مومن نژاد — 15.1 h — http://telegram.me/nimaeeee
+- سعیده تهرانی‌نسب — 14.6 h — https://t.me/saadi_bekhanim
+- افسر آریا — 13.5 h — https://www.instagram.com/afsararia5992
+- فریدون فرح‌اندوز — 11.0 h — https://t.me/fereidounfarahandouz
+- فرید حامد — 9.0 h — https://t.me/GouyaKetab
+- محمدیزدانی جوینده — 8.4 h — http://www.juyande.blogfa.com
+- آزاده — 8.0 h
+- فرشید ربانی — 7.6 h — http://www.shereno.com/71065/
+- احسان حلاج — 7.3 h — https://www.instagram.com/razz.ma.tazz.st/
+- علیرضا بخشی زاده روشنفکر — 7.1 h — https://www.instagram.com/alirezaba172
+- بامشاد لطف آبادی — 6.5 h — https://bamshad.net
+- آرش خیرآبادی — 6.1 h — https://www.instagram.com/arash_kheirabadi
+- سبحان گنجی — 5.7 h — https://youtube.com/@SobhanGanji
+- فرهاد بشیریان — 5.5 h
+- سید جابر موسوی صالحی — 4.8 h
+- شاپرک شیرازی — 4.8 h — https://www.instagram.com/shaparkshirazi/
+- سارنگ صیرفیان — 4.8 h
+- بهناز شکوهی — 4.1 h
+- محمدرضاکاکائی — 3.9 h — https://t.me/hafezaneha1
+- زهرا بهمنی — 3.8 h — https://www.instagram.com/zahra.bahmani1992/
+- ابوالفضل حسن زاده — 2.7 h — https://t.me/khatkhati_hayee_man
+- حجت الله عباسی — 2.5 h — https://t.me/ShekarestaneParsi
+- مجید آخته — 2.4 h — https://t.me/+VA_uBSUmMn5kNzFk
+- علی اسلامی مذهب — 2.4 h — https://shereno.com/67859/
+- طوبی برزگر — 2.2 h — https://t.me/shouronour
+- تناز پیراسته — 2.2 h — https://t.me/HeadphonesUp
+- کیوان عاروان — 2.0 h — https://t.me/keyvan_ganjoor
+- مبینا جهانشاهی — 1.8 h — https://t.me/beytnoor  کانال تلگرام
+- هادی روحانی — 1.8 h — https://www.instagram.com/hafezane.ir/
+- مخدوم حسان لاهوری — 1.7 h — https://www.instagram.com/ZindeRood/
+- طوبی  برزگر — 1.6 h
+- فتانه صانعی — 1.6 h
+- سیده سحر حسینی — 1.6 h — https://t.me/Rumi097
+- سعید شریفی — 1.5 h — https://t.me/beihaghi_sharifi777
+- پزی ساتکنی عندلیب — 1.5 h — https://t.me/Satkani_Andalib
+- فاطمه نیکو ایجادی — 1.4 h
+- هانیه سلیمی — 1.4 h
+- دریا قلیلی — 1.3 h — https://t.me/a_bibili_babili_bou
+- حسین رستگار — 1.3 h — http://t.me/rastegar96
+- نادیا رحمان — 1.3 h
+- م. کریمی — 1.2 h
+- زهرا ذوالقدر — 1.1 h — https://t.me/sahateshgh
+- گروه چامه‌خوان — 1.1 h — http://chameh.hamedrafi.com
+- مهدی سروری — 1.0 h
+- محسن دهقانیان — 1.0 h — https://www.instagram.com/golestaneh_saadi/
+- سهراب سیفی — 1.0 h — https://www.instagram.com/Booknameh
+- سمیه الماسی — 0.9 h — https://t.me/sokouteghalbam
+- زهرا شیبانی — 0.9 h — https://www.instagram.com/radio_offline/
+- علیرضا جعفری — 0.9 h — https://www.instagram.com/aliiijjj45?igsh=Mjlkbm9nNHAwZ3ho&utm_source=qr
+- محمدرضا کاکائی — 0.9 h — https://t.me/HafezaneHa1
+- رضا — 0.9 h
+- علی قلندری — 0.9 h — https://instagram.com/ali_ghalandari
+- داوود ملک زاده — 0.8 h — http://davoodmalekzaade.com
+- چامه‌خوان — 0.8 h — http://chameh.hamedrafi.com
+- محمدرضا جراح زاده — 0.8 h — http://mreza.ir/
+- محمدرضا خسروی — 0.8 h
+- ارژنگ آقاجری — 0.7 h — https://soundcloud.com/arjanga
+- علیرضا محرابی — 0.7 h
+- زهره لطیفی — 0.6 h
+- حامد بوطیقا — 0.6 h — https://zil.ink/boutighapodcast
+- مصطفی حسینی کومله — 0.6 h — https://t.me/qand_e_parsi
+- قمرالزمان مشکوری — 0.6 h
+- عباس هدایتی اصل — 0.6 h
+- اسماعیل فرازی کانال سکوت — 0.6 h — https://t.me/Sokootnet
+- طاهره خان پور — 0.5 h
+- محسن رحمتیان — 0.5 h
+- اسماعیل مرتضوی — 0.5 h
+- دکتر مریم صمدی — 0.5 h
+- علی معدلی — 0.4 h — https://t.me/mademadid
+- شبنم مرزیجرانی — 0.4 h — https://t.me/naamag
+- مریم جوزی — 0.4 h
+- علیرضا شاکری — 0.4 h
+- زهره نصری — 0.4 h
+- فریبا علومی یزدی — 0.4 h — https://sokhanvari.com/
+- اهورا هورخش — 0.4 h
+- طهورا بویوت — 0.4 h
+- امیرحسین بذرافشان — 0.4 h
+- بهداد فره‌وهر — 0.4 h — https://www.farahvahar.com
+- امیر محمدی — 0.3 h
+- عبدالحمید ضیایی — 0.3 h — https://t.me/abdolhamidziaei
+- محمد خزائی — 0.3 h
+- پریسا جلیلی — 0.3 h
+- مسعود طالبیان — 0.3 h
+- اعظم نوروزی — 0.3 h
+- یاسین ریاحی — 0.3 h — https://t.me/yasin_riyahi
+- مائده ابوالفتحی — 0.3 h — https://t.me/taranehvaresh
+- نوح منوری — 0.3 h
+- محمد ملکشاهی — 0.3 h — https://t.me/ebnhesam
+- سید علی علوی — 0.3 h
+- سعدا مصلحی — 0.3 h
+- شهرام شریف‌زاده — 0.3 h
+- عرفان حیدری خسرو — 0.3 h
+- سعید نامجو — 0.2 h — https://www.youtube.com/@SaeidNamjoo-v5f
+- سعیده طاهری — 0.2 h
+- پانیذ علیپور — 0.2 h
+- رامین کریمی — 0.2 h — https://t.me/ganjesherr
+- شهرام شریف زاده — 0.2 h
+- سیدمصطفی شجاعی — 0.2 h
+- فرحناز صادقی — 0.2 h — https://t.me/deklamehayesadeghi
+- محمدحسن گله داری — 0.2 h
+- علی نظیری — 0.2 h — https://t.me/nazirigram
+- احسان کریمی — 0.2 h
+- بهمن کلانتری — 0.2 h — https://instagram.com/sedayesafa
+- زینب بیات — 0.2 h — https://t.me/zaynabbayat
+- حسین محبی — 0.2 h — http://www.instagram.com/husseinmohebbi
+- هاتف علوی — 0.2 h — https://t.me/haa_teff
+- فاطمه نوروزی — 0.2 h
+- هامون — 0.2 h — https://t.me/Setiq
+- لیلا توکل — 0.2 h
+- علی پورزارع — 0.2 h — https://instagram.com/delname.ir
+- پری سانکنی عندلیب — 0.2 h — https://t.me/Satkani_Andalib
+- میترا مالیان — 0.2 h
+- محمدرضا توده فلاح — 0.2 h
+- م کریمی — 0.2 h
+- شهریار شاهین‌دژی — 0.2 h — https://t.me/Shahriyar_Shahindeji
+- یاسر میرزایی — 0.2 h — https://www.instagram.com/yasermirzaee/
+- مهدى سرورى — 0.2 h
+- بهنام محمدیان — 0.2 h
+- ماهان نوری — 0.1 h — https://mahannouri.com
+- الیزا زندی — 0.1 h
+- تقواسفی — 0.1 h
+- پرسته بال افکن — 0.1 h — https://t.me/Chakaameh_Parasteh
+- ااا راستین معتبرزاده ااا تکنوازی تار استاد فرهنگ شریف در آواز اصفهان ااا — 0.1 h — https://t.me/helali_joghataee
+- صدف مظاهری — 0.1 h
+- سعید لسان — 0.1 h
+- آویسا بذرگران — 0.1 h
+- محمد برزگر — 0.1 h
+- زهرا شعبانی — 0.1 h
+- میلاد نصرتی — 0.1 h — https://t.me/divanesaeb
+- حمید توانگر — 0.1 h — https://t.me/HamidTavangarChannel
+- فهیمه فیروزبخت — 0.1 h
+- حمید جوزدانی — 0.1 h
+- مهدی مختاری — 0.1 h — https://www.instagram.com/mahdimokhtaries/
+- سجاد شیربهار — 0.1 h — https://ganjoor.net/vahshi/divanv/ghazalv/sh5/
+- زهرا جمالی — 0.1 h
+- مروارید رضایی — 0.1 h
+- محسن هاشمی — 0.1 h — https://t.me/ketabgooya
+- پریسا یزدانیان — 0.1 h
+- غلامرضا آقاسی — 0.1 h — https://t.me/Zolfeyaar
+- دکتر احمد عزتی پرور — 0.1 h — https://t.me/ezzatiparvar
+- سید محمد هادی نبوی — 0.1 h — https://eitaa.com/golestan_borna
+- علی مرادی گنجه — 0.1 h
+- افرا عباسی — 0.1 h
+- داود وفایی سیاوشانی — 0.1 h — https://www.instagram.com/dnarrator
+- محمد ابراهیم باقری — 0.1 h
+- سیاوش علی شاه پور — 0.1 h
+- سید سهیل صدرزاده روح الامینی — 0.1 h
+- مهدی کلانتری — 0.1 h — https://www.instagram.com/mahdi_saqafi/
+- نسرین سیدزوار — 0.1 h — https://www.youtube.com/FarscaNasrin
+- حسین خواجویان — 0.1 h
+- پری ساتکنی  عندلیب — 0.1 h — https://t.me/Satkani_Andalib
+- الیاس بهرامی — 0.1 h — https://instagram.com/elyasbahramii?igshid=1pclvukhqhqmz
+- رسا امید — 0.1 h
+- راستین معتبرزاده  موسیقی زمینه تار نوازی استاد فرهنگ شریف با تنبک بهزاد رضوی نیا در آواز افشاری — 0.1 h — https://t.me/helali_joghataee
+- مهتاب حاجی محمدی — 0.1 h
+- احسان هومان — 0.1 h
+- دکتر عباس هدایتی اصل (سه‌تار: نیما بغدادی) — 0.1 h
+- فاطمه اخوان — 0.1 h
+- فاطمه امین — 0.1 h
+- آراسپ کاظمیان — 0.1 h — http://www.kazemian.net
+- حامد آتش فراز — 0.1 h — https://t.me/HeyU04/373
+- سارین ابراهیمی نه ساله — 0.1 h
+- امیر الماسی — 0.1 h
+- ضجرت — 0.1 h — http://t.me/zojratt
+- توریبا — 0.1 h
+- سام مهرآذر — 0.1 h — https://instagram.com/samrahbar_official
+- زینب زارعی — 0.1 h — https://www.instagram.com/zarei_hypnotherapist/
+- امیرحسین شهپروصال — under 0.1 h — https://www.instagram.com/a_shahparvesal/
+- پیمان شیخی — under 0.1 h — https://t.me/peymansheikhipoem
+- پارسا قنبری — under 0.1 h
+- راستین معتبرزاده  موسیقی زمینه تار نوازی استاد فرهنگ شریف در دستگاه نوا — under 0.1 h — https://t.me/helali_joghataee
+- فریبا صدری — under 0.1 h — https://www.instagram.com/fariba_sadri_mc/
+- الهامه مدبر — under 0.1 h — https://t.me/parseh_del
+- احسان اسماعیلی — under 0.1 h — http://telegram.me/enavayedel
+- ماهور کیانی — under 0.1 h
+- قاصدک شنو — under 0.1 h — https://t.me/Ghasedaksheno
+- علیرضا دهقانی — under 0.1 h
+- احسان عظیمی — under 0.1 h — https://t.me/shabkhaniha
+- علی‌اکبر یاغی‌تبار (سه‌تار: جواد سما) — under 0.1 h — http://t.me/aliakbaryaghitabar
+- هویدا — under 0.1 h
+- مهدا جهان پنج ساله — under 0.1 h — https://www.instagram.com/tv/B9cI6USla0o/?igshid=8l0xs5jq1rs7
+- محمود شریف پور — under 0.1 h — https://t.me/mahmoud7sh
+- یوسف پورانوری — under 0.1 h
+- سارین ابراهیمی نه ساله از تبریز — under 0.1 h
+- توریا — under 0.1 h
+- امیر حسین روناسی (تدوین: سید امیرحسین هدایتی) — under 0.1 h — https://t.me/Seda_Maan
+- امیر اثنی عشری — under 0.1 h — https://t.me/bustanesadi
+- سیامک هدایت — under 0.1 h
+- عندلیپری ساتکنی عندلیب — under 0.1 h — https://t.me/Satkani_Andalib
+- پری ساتگنی  عندلیب — under 0.1 h — https://t.me/Satkani_Andalib
+- هاشم نجفی — under 0.1 h — https://www.aparat.com/v/lcs536q
+- علی مراقب — under 0.1 h
+- عاطفه آقایی‌نژاد — under 0.1 h

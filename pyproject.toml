@@ -1,0 +1,10 @@
+# The repository root is not a package: install the packages under packages/ (see README.md).
+# This file only configures the test run over the whole repository.
+[tool.pytest.ini_options]
+testpaths = [
+  "packages/ganj-reading/tests", "packages/ganj-corpus/tests", "packages/ganj-voice/tests",
+  "packages/ganj-eval/tests", "tests",
+]
+pythonpath = ["packages/ganj-reading", "packages/ganj-corpus", "packages/ganj-voice", "packages/ganj-eval", "."]
+addopts = "--import-mode=importlib"
+markers = ["integration: needs GANJ_DATA and downloaded audio"]

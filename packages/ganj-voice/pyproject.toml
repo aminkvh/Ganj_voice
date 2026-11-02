@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ganj-voice"
+version = "0.1.0"
+description = "Voice disguise and ZipVoice/Vocos synthesis helpers of the Ganj voice"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "AGPL-3.0-or-later"}
+authors = [{name = "Amin Akbari"}]
+dependencies = ["ganj-reading", "numpy", "scipy", "librosa", "pyworld", "torch"]
+
+[project.optional-dependencies]
+praat = ["praat-parselmouth"]
+onnx = ["onnx", "sherpa-onnx"]
+
+[project.urls]
+Homepage = "https://github.com/aminkvh/Ganj_voice"
+
+[tool.setuptools]
+packages = ["ganj_voice"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "../ganj-reading"]
+addopts = "--import-mode=importlib"
+markers = ["integration: needs GANJ_DATA and downloaded audio"]

@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ganj-eval"
+version = "0.1.0"
+description = "Evaluation of a Persian poetry TTS voice: WER, MOS, voice identity, prosody, label and noise checks"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "AGPL-3.0-or-later"}
+authors = [{name = "Amin Akbari"}]
+dependencies = [
+  "ganj-reading", "ganj-corpus", "ganj-voice", "numpy", "soundfile", "librosa", "jiwer", "pyworld", "torch",
+  "torchaudio", "transformers", "scikit-learn",
+]
+
+[project.optional-dependencies]
+models = ["speechbrain", "utmosv2 @ git+https://github.com/sarulab-speech/UTMOSv2.git"]   # UTMOSv2 is not on PyPI
+
+[project.urls]
+Homepage = "https://github.com/aminkvh/Ganj_voice"
+
+[tool.setuptools]
+packages = ["ganj_eval"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "../ganj-reading", "../ganj-corpus", "../ganj-voice"]
+addopts = "--import-mode=importlib"
+markers = ["integration: needs GANJ_DATA and downloaded audio"]

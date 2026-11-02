@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ganj-corpus"
+version = "0.1.0"
+description = "Persian poetry TTS training data from Ganjoor and ManaTTS: selection, cutting, cleaning, labels, checks"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "AGPL-3.0-or-later"}
+authors = [{name = "Amin Akbari"}]
+dependencies = [
+  "ganj-reading[g2p]", "numpy", "soundfile", "librosa", "pyloudnorm", "requests", "torch", "torchaudio",
+  "transformers",
+]
+
+[project.optional-dependencies]
+manatts = ["pyarrow"]
+
+[project.urls]
+Homepage = "https://github.com/aminkvh/Ganj_voice"
+
+[tool.setuptools]
+packages = ["ganj_corpus"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "../ganj-reading"]
+addopts = "--import-mode=importlib"
+markers = ["integration: needs GANJ_DATA and downloaded audio"]

@@ -1,0 +1,28 @@
+{
+ "model": "zipvoice_runs/zipvoice_q_ft_mana/iter-40000-avg-2.pt",
+ "voice_dir": "models/ganj-zip-f2",
+ "prompt_wav": "corpus_q/prompts/f2.wav",
+ "prompt_phonemes": "dol/t o @asayeš o @eqbal o jahg/r h/qe1 @anhast h/qqe1 ma kojast",
+ "prompt_source": "corpus_q/clips/18347/15.wav (امیرحسین عظیمی, held out of training)",
+ "disguise": {
+  "method": "WORLD (pyworld)",
+  "formant": 1.06,
+  "semitones": 0.5,
+  "f0_floor_hz": 40.0,
+  "aperiodicity_squared": true,
+  "ltas_matched": true
+ },
+ "guidance_scale": 2.0,
+ "num_step": 64,
+ "speed": 1.0,
+ "eval_tag": "zip-q-ft_mana-f2-ds0-g2.0s64",
+ "identity_max_cos": 0.55,
+ "note": "paths relative to GANJ_DATA",
+ "despike": {
+  "start_bin": 60,
+  "time": false
+ },
+ "output_highpass_hz": 70.0,
+ "output_highpass_note": "zero-phase 8th-order Butterworth on the output (synth_voice.sh -> tools/postclean.py), removes the vocoder's 48/56 Hz hum lines. As-shipped eval run: zip-q-ft_mana-f2-ds0-g2.0s64-pch",
+ "identity_note": "0.550 to the closest corpus reciter on all 50 set_q outputs (0.545 on the first 20)"
+}
