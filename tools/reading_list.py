@@ -3,6 +3,10 @@
 """Text to a reading list for recipes/zipvoice/synth_voice.sh.
 
   python tools/reading_list.py IN.jsonl OUT_DIR --voice VOICE_DIR [--va] [--overrides FILE.json] [--device cuda]
+      [--read-all]
+
+Non-Persian hemistichs are left out (drop_non_persian; units may carry "langs", Ganjoor's languageId per line) unless
+--read-all, which the eval lists use (eval/distill/list50_d4h.tsv scores the Arabic lines too).
 
 IN.jsonl: one unit per line, {"key", "lines": [hemistichs, or one prose line], "kind": "verse" | "prose", "metre"
 (optional, the poem's metre name)}. Writes OUT_DIR/list.tsv (key, the voice's prompt phonemes, prompt.wav, target
@@ -47,6 +51,27 @@ def g2p_for(voice: Path, G, device: str = "cpu"):
     return ByKind(verse=G.G2P(model_id=str(voice / "g2p"), lexicon=lexicon, device=device), prose=base)
 
 
+def drop_non_persian(rows: list) -> tuple:
+    """(units with their non-Persian hemistichs taken out, units with none left). Since 2026-11-08 the voice does not
+    read Arabic or other non-Persian hemistichs (ganj_reading.language: Ganjoor's tag in the unit's optional "langs",
+    one languageId or null per line, else the Arabic detector; prose lines by their tag only). A unit that lost a line
+    carries "skipped": the indices of the lines left out."""
+    from ganj_reading.language import skip_hemistich
+    kept, skipped = [], []
+    for r in rows:
+        langs = r.get("langs") or [None] * len(r["lines"])
+        prose = r.get("kind") == "prose"
+        out = [i for i, (line, lid) in enumerate(zip(r["lines"], langs))
+               if (lid is not None and skip_hemistich(line, lid)) or (not prose and skip_hemistich(line, lid))]
+        if not out:
+            kept.append(r)
+        elif len(out) == len(r["lines"]):
+            skipped.append({**r, "skipped": out})
+        else:
+            kept.append({**r, "lines": [l for i, l in enumerate(r["lines"]) if i not in out], "skipped": out})
+    return kept, skipped
+
+
 def build(rows: list, labels: list, prompt_ph: str, pauses: bool, va: bool):
     """(list.tsv lines, text.jsonl lines); a unit the G2P could not read (label None) is left out."""
     tsv, text = [], []
@@ -57,8 +82,10 @@ def build(rows: list, labels: list, prompt_ph: str, pauses: bool, va: bool):
         prose = r.get("kind") == "prose"
         target = reading_label(ph, r["lines"], prose, pauses=pauses, va=va)
         tsv.append("\t".join([r["key"], prompt_ph, "prompt.wav", target]) + "\n")
-        text.append(json.dumps({"key": r["key"], "lines": r["lines"], "phonemes": strip_pauses(target)},
-                               ensure_ascii=False) + "\n")
+        row = {"key": r["key"], "lines": r["lines"], "phonemes": strip_pauses(target)}
+        if r.get("skipped"):
+            row["skipped"] = r["skipped"]
+        text.append(json.dumps(row, ensure_ascii=False) + "\n")
     return tsv, text
 
 
@@ -70,10 +97,13 @@ def main(argv=None):
     ap.add_argument("--va", action="store_true", help="«و» read v/ in prose, at a line start and after punctuation")
     ap.add_argument("--overrides", action="append", default=[], help="reviewed per-line readings (JSON list)")
     ap.add_argument("--device", default="cpu")
+    ap.add_argument("--read-all", action="store_true",
+                    help="keep the non-Persian hemistichs (the eval lists, which score the Arabic lines too)")
     a = ap.parse_args(argv)
     from ganj_reading import g2p as G
     voice = Path(a.voice)
     rows = [json.loads(l) for l in open(a.inp, encoding="utf-8") if l.strip()]
+    rows, skipped = (rows, []) if a.read_all else drop_non_persian(rows)
     labels = g2p_for(voice, G, a.device).phonemize_units([(r["lines"], r.get("kind", "verse"), r.get("metre")) for r in rows])
     labels = with_overrides(rows, labels, [o for p in a.overrides for o in json.load(open(p, encoding="utf-8"))])
     pauses = voice_has_pauses((voice / "tokens.txt").read_text(encoding="utf-8"))
@@ -83,8 +113,11 @@ def main(argv=None):
     out.mkdir(parents=True, exist_ok=True)
     (out / "list.tsv").write_text("".join(tsv), encoding="utf-8")
     (out / "text.jsonl").write_text("".join(text), encoding="utf-8")
-    print(f"wrote {out}/list.tsv and text.jsonl: {len(tsv)} of {len(rows)} units; pauses {'on' if pauses else 'off'}, "
-          f"«و» rule {'on' if a.va else 'off'}")
+    (out / "skipped.jsonl").write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in skipped), encoding="utf-8")
+    cut = sum(len(r.get("skipped", [])) for r in rows + skipped)
+    print(f"wrote {out}/list.tsv and text.jsonl: {len(tsv)} of {len(rows) + len(skipped)} units; {cut} non-Persian "
+          f"hemistichs left out ({len(skipped)} units with nothing left, in skipped.jsonl); pauses "
+          f"{'on' if pauses else 'off'}, «و» rule {'on' if a.va else 'off'}")
 
 
 if __name__ == "__main__":

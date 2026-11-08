@@ -16,6 +16,22 @@ VOICE_DIR=ganj-zip-d4h recipes/zipvoice/synth_voice.sh lists/list.tsv out lists/
 ```
 
 `out/` then holds one WAV file per line of `example_in.jsonl`. To read your own text, write it in the same format.
+Hemistichs that are not Persian (Arabic, Azeri Turkish) are left out of the list unless you add `--read-all`: the
+voice reads them badly.
+
+## Use the voice on a phone
+
+The model folder `ganj-zip-distill` (same places) is the same voice made to read in 8 steps instead of 64, as ONNX
+files for [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) 2.0.1 on a phone's CPU. Its README gives the files, the
+settings (`phone.json`) and the clean-up the app does after sherpa. On a computer, read a list made as above with it
+(in an environment with sherpa-onnx 2.0.1):
+
+```bash
+cp lists/list.tsv lists/phone.tsv
+python -m ganj_voice.glue lists/phone.tsv --tokens ganj-zip-distill/tokens.txt   # what the model reads
+python tools/sherpa_read.py ganj-zip-distill lists/phone.tsv out_raw
+python -m ganj_voice.phonepost out_raw out_phone --phone ganj-zip-distill/phone.json --set lists/text.jsonl
+```
 
 ## Code
 
@@ -24,9 +40,9 @@ each other only in this order: reading → corpus → voice → eval.
 
 | Package | Import | What it does | Needs |
 |---|---|---|---|
-| [ganj-reading](packages/ganj-reading) | `ganj_reading` | Persian poetry reading rules: letters to phonemes (Homo-GE2PE) with ezafe, harakat, tashdid, sukun, tanwin and small-alef rules and a word lexicon; aruz metre scansion; the token set (style, metre and pause tokens) | – |
+| [ganj-reading](packages/ganj-reading) | `ganj_reading` | Persian poetry reading rules: letters to phonemes (Homo-GE2PE) with ezafe, harakat, tashdid, sukun, tanwin and small-alef rules and a word lexicon; aruz metre scansion; the token set (style, metre and pause tokens); which hemistichs are read (not the non-Persian ones) | – |
 | [ganj-corpus](packages/ganj-corpus) | `ganj_corpus` | Training data from Ganjoor and ManaTTS: selection, download, cutting at aligned pauses, cleaning, labels, pause labels, the rules check every label must pass | ganj-reading |
-| [ganj-voice](packages/ganj-voice) | `ganj_voice` | Voice disguise and synthesis helpers: prompt disguise (WORLD, Praat, mel domain), mains-hum and noise removal, mel despike before the vocoder, guidance interval, finer sampler finish, regeneration from part-way along the flow, pause trimming, Vocos fine-tune data | ganj-reading |
+| [ganj-voice](packages/ganj-voice) | `ganj_voice` | Voice disguise and synthesis helpers: prompt disguise (WORLD, Praat, mel domain), mains-hum and noise removal, mel despike before the vocoder, guidance interval, finer sampler finish, regeneration from part-way along the flow, pause trimming, Vocos fine-tune data; the phone voice: distillation settings, the despiking ONNX vocoder, the prompt as sherpa-onnx reads it, the clean-up after sherpa | ganj-reading |
 | [ganj-eval](packages/ganj-eval) | `ganj_eval` | Evaluation: Whisper WER, UTMOS, distance to every corpus reciter's voice, prosody against a reference reading, CTC label checks, noise measures, a listening page | reading, corpus, voice |
 
 Beside the packages:
@@ -37,8 +53,9 @@ Beside the packages:
   (`postclean.py`, `trim_pauses.py`), choosing among noise draws (`pick_draws.py`), checks before synthesis or training
   (`check_rules.py`, `g2p_gate.py`), pause labels (`pause_labels.py`), metre and lexicon tools (`freeze_metres.py`,
   `scansion_report.py`, `validate_lexicon.py`), corpus audits (`boundary_audit.py`, `ina_segment.py`), measurements
-  (`noise_probe.py`, `prosody_compare.py`) and a licence check of the installed packages (`check_licenses.py`). Each
-  file's docstring says how to run it.
+  (`noise_probe.py`, `prosody_compare.py`), reading with the phone model (`sherpa_read.py`), training the
+  Arabic-hemistich detector (`train_arabic_detector.py`) and a licence check of the installed packages
+  (`check_licenses.py`). Each file's docstring says how to run it.
 
 ## Install
 
@@ -69,7 +86,7 @@ The training and synthesis recipes also need a ZipVoice checkout and its environ
 |---|---|---|
 | `GANJ_DATA` | tools, recipes | the data folder: corpus, eval set, model runs, voice packages (not in git) |
 | `ZIPVOICE_DIR` | recipes, `tools/pause_labels.py` | a ZipVoice checkout (https://github.com/k2-fsa/ZipVoice) |
-| `GANJ_PY`, `ZIPVOICE_PY`, `INA_PY` | recipes | the command that runs Python in each environment (defaults `python`, `python3`, `python`) |
+| `GANJ_PY`, `ZIPVOICE_PY`, `INA_PY`, `SHERPA_PY` | recipes | the command that runs Python in each environment (defaults `python`, `python3`, `python`, `python`) |
 
 A tool or recipe that needs one of these stops with a message naming it when it is not set.
 

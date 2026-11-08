@@ -496,3 +496,27 @@ def test_the_model_reads_a_line_as_its_words_without_vowel_marks_with_a_written_
     words, plain = model_words("خانهٔ دلِ ما، رحمةٌ")
     assert words == ["خانهٔ", "دلِ", "ما", "رحمةٌ"]
     assert plain == ["خانه", "دل", "ما", "رحمت"]
+
+
+def test_zhe_is_written_as_the_voices_phoneme_in_the_shadda_and_sukun_rules():
+    from ganj_reading.g2p import geminate, harakat_agrees
+    assert geminate("مژّه", "mo;e") == "mo;;e"
+    assert harakat_agrees("مُژْده", "mo;de")
+    assert not harakat_agrees("مُژْده", "mo;ode")
+
+
+def test_the_shipped_lexicon_reads_ze_qabul_joined_as_zeq_bul():
+    # Ruled 2026-11-07: «ما را زقبول و ردّ کس باکی نیست» is ze qabul; the models wrote zoqbul and z/qbul
+    from pathlib import Path
+    from ganj_reading import g2p as G
+    lexicon = G.load_lexicon(Path(G.__file__).parent / "lexicon.json")
+    assert g2p({"ما را زقبول و": "ma ra zoqbul o"}, lexicon=lexicon).phonemize_line("ما را زقبول و") == "ma ra zeq/bul o"
+
+
+def test_the_shipped_lexicon_reads_bedravi_as_you_will_reap():
+    # Ruled 2026-11-07: «هر چه کنی کشت، همان بدروی» is bedravi; the fine-tuned model wrote bedruy (all 8 uses of the
+    # written word in the poems are "you will reap")
+    from pathlib import Path
+    from ganj_reading import g2p as G
+    lexicon = G.load_lexicon(Path(G.__file__).parent / "lexicon.json")
+    assert g2p({"همان بدروی": "h/man bedruy"}, lexicon=lexicon).phonemize_line("همان بدروی") == "h/man bedr/vi"

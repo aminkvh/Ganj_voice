@@ -52,3 +52,7 @@ def test_the_cli_adds_the_leading_pause_when_the_voices_token_list_has_it(tmp_pa
     tok.write_text("_\t0\n", encoding="utf-8")
     main([str(lst), "--tokens", str(tok)])   # no pause tokens: glue only (already glued, unchanged)
     assert lst.read_text(encoding="utf-8") == f"k1\tp\tprompt.wav\t{L} bord/ndo s/@y\n"
+
+
+def test_a_word_ending_in_zhe_is_a_consonant_end_too():
+    assert glue_vav("d/; o b/ru") == "d/;o b/ru"

@@ -19,8 +19,8 @@ import soundfile as sf
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from ganj_corpus.rules_check import text_words  # noqa: E402
 from ganj_eval.align import FRAME_S, SLACK_S, SR, Aligner, frame_db  # noqa: E402
-from ganj_eval.prosody import silent_frames, silent_run_in_gap  # noqa: E402
-from ganj_voice.pausetrim import CAP_S, shorten_runs, stops_to_trim  # noqa: E402
+from ganj_eval.prosody import silent_run_in_gap  # noqa: E402
+from ganj_voice.pausetrim import CAP_S, shorten_runs, silent_frames, stops_to_trim  # noqa: E402
 
 from tools._env import env_path  # noqa: E402
 DATA = env_path("GANJ_DATA")

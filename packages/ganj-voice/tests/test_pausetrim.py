@@ -3,9 +3,15 @@
 import numpy as np
 import pytest
 
-from ganj_voice.pausetrim import shorten_runs, stops_to_trim
+from ganj_voice.pausetrim import shorten_runs, silent_frames, stops_to_trim
 
 SR = 1000
+
+
+def test_a_frame_is_silent_well_below_the_speech_level_and_near_the_floor():
+    db = np.array([-60.0] * 10 + [-10.0] * 80 + [-58.0] * 10)
+    s = silent_frames(db)
+    assert s[:10].all() and not s[10:90].any() and s[90:].all()
 
 
 def _tone(s, f=50.0):

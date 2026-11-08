@@ -14,7 +14,8 @@ says otherwise.
 | Component | Use | Licence | Source |
 |---|---|---|---|
 | ZipVoice (k2-fsa), commit 2f7326f | acoustic model code; the model is trained from scratch, no ZipVoice weights are used | Apache-2.0 | https://github.com/k2-fsa/ZipVoice |
-| Vocos, `charactr/vocos-mel-24khz` | vocoder code and weights | MIT | https://github.com/gemelo-ai/vocos |
+| Vocos, `charactr/vocos-mel-24khz` | vocoder code and weights; the phone model's `vocos_24khz_despike.onnx` is sherpa-onnx's ONNX export of these weights (`vocos_24khz.onnx`) with a mel despike added in front | MIT | https://github.com/gemelo-ai/vocos |
+| sherpa-onnx (k2-fsa), 2.0.1 | runs the phone model | Apache-2.0 | https://github.com/k2-fsa/sherpa-onnx |
 | Homo-GE2PE, `mehdi-hf/Homo-GE2PE-Persian-HF` (copyright (c) 2025 Elnaz Rahmati) | Persian letters to phonemes; the model download's `g2p/` is a fine-tune of it, with its licence and notice inside | MIT | https://huggingface.co/mehdi-hf/Homo-GE2PE-Persian-HF |
 | ByT5, `google/byt5-small` | the base model of Homo-GE2PE | Apache-2.0 | https://huggingface.co/google/byt5-small |
 | Persian wav2vec2, `jonatasgrosman/wav2vec2-large-xlsr-53-persian` | CTC forced alignment for corpus cutting, labels and analysis only; not part of the voice | Apache-2.0 | https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-persian |

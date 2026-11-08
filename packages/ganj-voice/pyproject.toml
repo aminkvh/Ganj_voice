@@ -14,7 +14,7 @@ dependencies = ["ganj-reading", "numpy", "scipy", "librosa", "pyworld", "torch"]
 
 [project.optional-dependencies]
 praat = ["praat-parselmouth"]
-onnx = ["onnx", "sherpa-onnx"]
+onnx = ["onnx", "onnxruntime", "sherpa-onnx"]
 
 [project.urls]
 Homepage = "https://github.com/aminkvh/Ganj_voice"
@@ -24,6 +24,6 @@ packages = ["ganj_voice"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = [".", "../ganj-reading"]
+pythonpath = [".", "../ganj-reading", "../ganj-corpus"]   # test_glue reads the pause tokens from ganj_corpus
 addopts = "--import-mode=importlib"
 markers = ["integration: needs GANJ_DATA and downloaded audio"]

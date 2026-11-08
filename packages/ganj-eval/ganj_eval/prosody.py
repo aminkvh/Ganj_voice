@@ -11,11 +11,6 @@ from dataclasses import dataclass
 
 import numpy as np
 
-SPEECH_PCT = 95      # speech level: this percentile of the frame levels (dB)
-FLOOR_PCT = 10       # noise floor: this percentile
-BELOW_SPEECH_DB = 35
-ABOVE_FLOOR_DB = 6
-
 
 @dataclass(frozen=True)
 class Word:
@@ -32,12 +27,6 @@ def line_words(lines, vocab) -> list:
             if chars:
                 out.append(Word(i, w, chars))
     return out
-
-
-def silent_frames(db: np.ndarray) -> np.ndarray:
-    """A frame is silent below both the speech level - 35 dB and the floor + 6 dB, whichever is higher."""
-    speech, floor = np.percentile(db, SPEECH_PCT), np.percentile(db, FLOOR_PCT)
-    return db < max(speech - BELOW_SPEECH_DB, floor + ABOVE_FLOOR_DB)
 
 
 def silent_run_in_gap(silent: np.ndarray, start: float, end: float, frame_s: float):

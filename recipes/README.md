@@ -10,7 +10,10 @@ Three Python environments (one is enough if everything installs together):
 - the **ganj environment**: the four packages of this repository (`pip install -e packages/...`, see the main README);
 - the **ZipVoice environment**: a checkout of https://github.com/k2-fsa/ZipVoice (commit 2f7326f) and its
   requirements; `recipes/vocos/` also needs `vocos` there;
-- the **segmentation environment**: inaSpeechSegmenter (only `build_corpus.sh`).
+- the **segmentation environment**: inaSpeechSegmenter (only `build_corpus.sh`);
+- the **sherpa environment**: sherpa-onnx 2.0.1, numpy and soundfile (only `zipvoice/phone_chain.sh` and
+  `tools/sherpa_read.py`). The phone export (`zipvoice/export_distill.sh`) also needs `onnx` and `onnxruntime` in the
+  ZipVoice environment, and `onnx-ir` for `B8=1`.
 
 ```bash
 export GANJ_DATA=/path/to/ganj-voice-data        # corpus, eval set, model runs (paths in voice_d4h.json are relative to it)
@@ -19,7 +22,11 @@ export ZIPVOICE_DIR=/path/to/ZipVoice
 export GANJ_PY="conda run --no-capture-output -n ganj-voice python"
 export ZIPVOICE_PY="conda run --no-capture-output -n ganj-zip python3"
 export INA_PY="conda run --no-capture-output -n ganj-ina python"
+export SHERPA_PY=/path/to/sherpa-env/bin/python
 ```
+
+`zipvoice/export_distill.sh` feeds Python on stdin, so there `ZIPVOICE_PY` must be the environment's own `python`
+(e.g. `/path/to/conda/envs/ganj-zip/bin/python`), not `conda run`.
 
 Without them the scripts use `python` / `python3` from the PATH. A script stops with a message when `GANJ_DATA` or
 `ZIPVOICE_DIR` is needed and not set. ZipVoice's data for this voice lives in `$ZIPVOICE_DIR/egs/zipvoice/data_q`.
@@ -51,7 +58,8 @@ Without them the scripts use `python` / `python3` from the PATH. A script stops 
    `$GANJ_DATA/models/`, or point `VOICE_DIR` at it. `tools/reading_list.py IN.jsonl OUT_DIR --voice VOICE_DIR` makes a
    reading list and its text file from plain text (one unit per line: key, lines, kind verse or prose, optional metre):
    the reading rules, the voice's `g2p/` model for verse, reviewed per-line readings (`--overrides`), the reading-time
-   pauses. `zipvoice/synth_voice.sh LIST.tsv OUT_DIR [TEXT.jsonl]` reads the list with that voice, e.g.
+   pauses. Non-Persian hemistichs are left out (`ganj_reading.language`: Ganjoor's language tag when a unit carries
+   `langs`, else a letter n-gram detector trained by `tools/train_arabic_detector.py`) unless `--read-all`. `zipvoice/synth_voice.sh LIST.tsv OUT_DIR [TEXT.jsonl]` reads the list with that voice, e.g.
    `tools/reading_list.py $GANJ_DATA/models/ganj-zip-d4h/example_in.jsonl lists --voice $GANJ_DATA/models/ganj-zip-d4h`,
    then `zipvoice/synth_voice.sh lists/list.tsv out lists/text.jsonl`. Every list passes `tools/check_rules.py` first;
    the model reads a «و» after a consonant-final word glued onto it (`ganj_voice.glue`); the sampler guides only up to
@@ -63,6 +71,17 @@ Without them the scripts use `python` / `python3` from the PATH. A script stops 
    `zipvoice/draws.sh` makes N draws of chosen lines for inspection.
 9. **Scoring.** `python -m ganj_eval.run --data $GANJ_DATA --tag TAG --wav-dir DIR --set set_q.jsonl`;
    `zipvoice/sweep_q.sh`, `zipvoice/sweep_despike_x.sh` and `zipvoice/sweep_tail.sh` synthesise and score settings.
+10. **The phone voice.** `zipvoice/distill_q9h.sh` distils the released model into a student that reads in a few
+    steps: stage 1, 60k iterations with the released model as the teacher; stage 2,
+    `STAGE=second TEACHER=$GANJ_DATA/zipvoice_runs/zipvoice_q_distill_1/iter-60000-avg-2.pt AVG=1 zipvoice/distill_q9h.sh`
+    (2k iterations). `zipvoice/synth_distill.sh` reads with a student in PyTorch. `zipvoice/export_distill.sh STUDENT_DIR
+    CKPT OUT_DIR` writes the phone folder: the ONNX text encoder and flow decoder (fp32 and int8; block 8-bit too with
+    `B8=1`), sherpa-onnx's Vocos with the mel despike in front (download
+    https://github.com/k2-fsa/sherpa-onnx/releases/download/vocoder-models/vocos_24khz.onnx into
+    `$GANJ_DATA/models/sherpa_vocos/` first), the prompt as sherpa must read it, and `phone.json`.
+    `zipvoice/phone_chain.sh PHONE_DIR TAG` reads the eval lines through sherpa and the app's clean-up
+    (`ganj_voice.phonepost`) and scores them. The released `ganj-zip-distill` is stage 2's `iter-2000-avg-1.pt`, fp32,
+    8 steps, guidance 2.0.
 
 Diagnostics, not part of the released voice:
 

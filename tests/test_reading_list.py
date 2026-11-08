@@ -53,3 +53,32 @@ def test_a_voice_with_its_own_g2p_reads_verse_with_it_and_prose_with_the_base_mo
     assert g2p_for(tmp_path, G).phonemize_units(units) == ["base", "base"]
     (tmp_path / "g2p").mkdir()
     assert g2p_for(tmp_path, G).phonemize_units(units) == [str(tmp_path / "g2p"), "base"]
+
+
+def test_a_non_persian_hemistich_is_dropped_before_the_g2p_and_named():
+    # Ruled 2026-11-08: the voice skips Arabic and other non-Persian hemistichs (the app shows them and pauses)
+    from tools.reading_list import drop_non_persian
+    rows = [{"key": "2130-1", "kind": "verse", "langs": [2, None],
+             "lines": ["اَلا یا اَیُّهَا السّاقی اَدِرْ کَأساً و ناوِلْها", "که عشق آسان نمود اوّل ولی افتاد مشکل‌ها"]},
+            {"key": "2130-7", "kind": "verse",   # untagged: the detector finds the Arabic half
+             "lines": ["حضوری گر همی خواهی از او غایب مشو حافظ", "مَتیٰ ما تَلْقَ مَنْ تَهْویٰ دَعِ الدُّنْیا وَ اَهْمِلْها"]},
+            {"key": "x-1", "kind": "verse", "langs": [2, 2], "lines": ["الف", "ب"]}]
+    kept, skipped = drop_non_persian(rows)
+    assert [(r["key"], r["lines"], r["skipped"]) for r in kept] == [
+        ("2130-1", ["که عشق آسان نمود اوّل ولی افتاد مشکل‌ها"], [0]),
+        ("2130-7", ["حضوری گر همی خواهی از او غایب مشو حافظ"], [1])]
+    assert [(r["key"], r["skipped"]) for r in skipped] == [("x-1", [0, 1])]
+
+
+def test_a_unit_with_nothing_to_skip_is_passed_on_unchanged_and_prose_is_skipped_only_by_its_tag():
+    from tools.reading_list import drop_non_persian
+    rows = [{"key": "a", "kind": "verse", "lines": ["جان و دل", "دل و جان"]},
+            {"key": "p", "kind": "prose", "lines": ["قال النبی علیه السلام"]}]
+    kept, skipped = drop_non_persian(rows)
+    assert kept == rows and skipped == []
+
+
+def test_the_text_row_names_the_hemistichs_the_voice_left_out():
+    rows = [{"key": "k", "lines": ["که عشق آسان نمود اوّل ولی افتاد مشکل‌ها"], "kind": "verse", "skipped": [0]}]
+    _, text = build(rows, [T.VERSE + "ke @ešq"], "p", pauses=False, va=False)
+    assert json.loads(text[0])["skipped"] == [0]

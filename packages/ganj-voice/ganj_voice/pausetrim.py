@@ -9,6 +9,16 @@ from typing import Iterable, List, Optional, Sequence, Tuple
 import numpy as np
 
 CAP_S, FADE_S = 0.30, 0.01
+SPEECH_PCT = 95      # speech level: this percentile of the frame levels (dB)
+FLOOR_PCT = 10       # noise floor: this percentile
+BELOW_SPEECH_DB = 35
+ABOVE_FLOOR_DB = 6
+
+
+def silent_frames(db: np.ndarray) -> np.ndarray:
+    """A frame is silent below both the speech level - 35 dB and the floor + 6 dB, whichever is higher."""
+    speech, floor = np.percentile(db, SPEECH_PCT), np.percentile(db, FLOOR_PCT)
+    return db < max(speech - BELOW_SPEECH_DB, floor + ABOVE_FLOOR_DB)
 
 
 def stops_to_trim(runs: Sequence[Optional[Tuple[float, float]]], breaks: Iterable[int], cap: float = CAP_S) -> list:

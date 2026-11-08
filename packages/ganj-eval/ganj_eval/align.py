@@ -4,7 +4,8 @@
 and labelling only, never shipped) and the pause at each word boundary (ganj_eval.prosody)."""
 import numpy as np
 
-from ganj_eval.prosody import silence_in_gap, silent_frames
+from ganj_eval.prosody import silence_in_gap
+from ganj_voice.pausetrim import silent_frames
 
 MODEL = "jonatasgrosman/wav2vec2-large-xlsr-53-persian"
 SR = 16000

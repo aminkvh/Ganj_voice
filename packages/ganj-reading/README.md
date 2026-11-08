@@ -7,6 +7,8 @@ Persian poetry reading rules for text-to-speech, as used by Ganj voice (آوای
   lexicon (`lexicon.json`), and, for verse, the n-best reading that scans in the poem's metre.
 - `ganj_reading.scansion`: aruz scansion of phonemes against a metre name.
 - `ganj_reading.tokens`: the token set: style tokens (verse, prose, hemistich), one token per metre (`metres.json`).
+- `ganj_reading.language`: which hemistichs to read: Ganjoor's language tag when there is one, else a letter n-gram
+  detector of Arabic hemistichs (`arabic_ngrams.json`) that reads a hemistich when unsure.
 
 ```bash
 pip install -e .            # tokens and scansion

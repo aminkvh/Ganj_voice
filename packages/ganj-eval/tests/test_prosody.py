@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from ganj_eval.prosody import compare_pauses, line_words, silence_in_gap, silent_frames, silent_run_in_gap, stretch_corr
+from ganj_eval.prosody import compare_pauses, line_words, silence_in_gap, silent_run_in_gap, stretch_corr
 
 VOCAB = {ch: i for i, ch in enumerate("|سالهنردخدایبتیگزش")}
 
@@ -11,12 +11,6 @@ VOCAB = {ch: i for i, ch in enumerate("|سالهنردخدایبتیگزش")}
 def test_words_drop_half_spaces_and_punctuation_and_remember_their_line():
     ws = line_words(["سال‌ها نرد،", "خدایی!"], VOCAB)
     assert [(w.line, w.text, w.chars) for w in ws] == [(0, "سال‌ها", "سالها"), (0, "نرد،", "نرد"), (1, "خدایی!", "خدایی")]
-
-
-def test_a_frame_is_silent_well_below_the_speech_level_and_near_the_floor():
-    db = np.array([-60.0] * 10 + [-10.0] * 80 + [-58.0] * 10)
-    s = silent_frames(db)
-    assert s[:10].all() and not s[10:90].any() and s[90:].all()
 
 
 def test_only_the_longest_silent_run_inside_a_gap_counts_as_its_pause():

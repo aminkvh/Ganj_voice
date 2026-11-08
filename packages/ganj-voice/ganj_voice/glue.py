@@ -16,7 +16,7 @@ from pathlib import Path
 
 from ganj_reading import tokens as T
 
-CONSONANTS = set("bcdfghjklmnpqrstvwxyzš@")
+CONSONANTS = set("bcdfghjklmnpqrstvwxyzš@;")   # ; is ژ
 LONG = ""   # the long pause token (ganj_corpus.pauses.PAUSE_LONG)
 PREFIX = set(T.STYLE + T.METRE_TOKENS)
 
