@@ -520,3 +520,140 @@ def test_the_shipped_lexicon_reads_bedravi_as_you_will_reap():
     from ganj_reading import g2p as G
     lexicon = G.load_lexicon(Path(G.__file__).parent / "lexicon.json")
     assert g2p({"همان بدروی": "h/man bedruy"}, lexicon=lexicon).phonemize_line("همان بدروی") == "h/man bedr/vi"
+
+
+def test_the_shipped_lexicon_reads_bebod_as_was():
+    # Ruled 2026-11-09: «ببد شاه یک ماه در نیمروز» is bebod; every fine-tune wrote beb/d
+    from pathlib import Path
+    from ganj_reading import g2p as G
+    lexicon = G.load_lexicon(Path(G.__file__).parent / "lexicon.json")
+    assert g2p({"ببد شاه": "beb/d $ah"}, lexicon=lexicon).phonemize_line("ببد شاه") == "bebod šah"
+
+
+def test_a_word_written_with_ye_ast_is_read_ist():
+    # Ruled 2026-11-09: «که هر خاری به تسبیحش زبانی‌است» is z/banist; the models wrote z/bani/st
+    assert g2p({"زبانی‌است": "z/bani/st"}).phonemize_line("زبانی‌است") == "z/banist"
+    assert g2p({"تسبیح‌خوانی‌است": "t/sbihxani@/st"}).phonemize_line("تسبیح‌خوانی‌است") == "t/sbihxanist"
+
+
+def test_ye_ast_after_a_one_letter_stem_keeps_its_ast():
+    # نی‌است, کی‌است: ney / key + ast; nist would be "is not"
+    assert g2p({"نی‌است": "ni/st"}).phonemize_line("نی‌است") == "ni/st"
+    assert g2p({"کی‌است": "key/st"}).phonemize_line("کی‌است") == "key/st"
+
+
+HAZAJ = "مفاعیلن مفاعیلن فعولن (هزج مسدس محذوف یا وزن دوبیتی)"
+MOJTASS = "مفاعلن فعلاتن مفاعلن فعلن (مجتث مثمن مخبون محذوف)"
+
+
+def test_ye_ast_is_read_ist_in_a_metre_and_keeps_its_ast_where_only_that_scans():
+    line = "که هر خاری به تسبیحش زبانی‌است"
+    g = g2p({line: ["ke h/r xari be t/sbih/$ z/bani/st"]})
+    assert g.phonemize_line(line, metre=HAZAJ) == "ke h/r xari be t/sbih/š z/banist"
+    line = "زبانی‌است به مرا که می زرا به کما"
+    g = g2p({line: ["z/bani/st be mara ke mi z/ra be k/ma"]})
+    assert g.phonemize_line(line, metre=MOJTASS) == "z/bani/st be mara ke mi z/ra be k/ma"
+
+
+def test_the_shipped_lexicon_reads_the_marked_mohdas_as_mohdas():
+    # «تا کی ز قدیم و مُحدَث»: mohd/s, for the metre; the model wrote moh/dd/s
+    from pathlib import Path
+    from ganj_reading import g2p as G
+    lexicon = G.load_lexicon(Path(G.__file__).parent / "lexicon.json")
+    assert g2p({"جهان چه محدث": "j/han ce moh/dd/s"}, lexicon=lexicon).phonemize_line("جهان چه مُحدَث") == "j/han ce mohd/s"
+    # only the marked spelling: an unmarked محدث stays the model's (mohaddes, the hadith narrator)
+    assert g2p({"جهان چه محدث": "j/han ce moh/ddes"}, lexicon=lexicon).phonemize_line("جهان چه محدث") == "j/han ce moh/ddes"
+
+
+def test_no_ezafe_right_before_a_typed_pause_mark():
+    # a word before ، ؛ : ! ؟ ends a phrase, so it takes no ezafe
+    assert g2p({"به خواب دو چشم": "be xabe1 do c/šm"}).phonemize_line("به خواب، دو چشم") == "be xab do c/šm"
+    assert g2p({"نوشت این مرد آزادی": "nevešt @in m/rde1 @azadi"}).phonemize_line("نوشت این مرد: آزادی") == \
+        "nevešt @in m/rd @azadi"
+    assert g2p({"حیف استاد": "heyfe1 @ostad"}).phonemize_line("حیف! اُستاد") == "heyf @ostad"
+    assert g2p({"کار این کار": "kare1 @in kar"}).phonemize_line("کار ، این کار") == "kar @in kar"  # typed apart
+    assert g2p({"خواب دو چشم": "xabe1 do c/šm"}).phonemize_line("خواب،دو چشم") == "xab do c/šm"  # typed together
+    assert g2p({"ماه روزه": "mahe1 ruze"}).phonemize_line("ماه روزه") == "mahe1 ruze"  # no mark: the ezafe stays
+
+
+def test_a_mark_typed_at_the_start_of_the_next_word_belongs_to_the_word_before_it():
+    assert g2p({"گفت هر کس": "gofte1 h/r k/s"}).phonemize_line("گفت !هر کس") == "goft h/r k/s"
+    assert g2p({"گفت هر کس": "gofte1 hore1 k/s"}).phonemize_line("گفت !هر کس") == "goft hore1 k/s"
+
+
+def test_a_written_kasra_keeps_its_ezafe_before_a_pause_mark():
+    assert g2p({"دل من": "dele1 m/n"}).phonemize_line("دلِ، من") == "dele1 m/n"
+
+
+def test_the_marked_mohdas_before_a_comma_is_read_without_ezafe():
+    # 145660-c1: the lexicon keeps the model's ezafe; the pause mark then drops it
+    from pathlib import Path
+    from ganj_reading import g2p as G
+    lexicon = G.load_lexicon(Path(G.__file__).parent / "lexicon.json")
+    line = "تا کی ز قدیم و مُحدَث، اومیدم و بیم"
+    g = g2p({"تا کی ز قدیم و محدث اومیدم و بیم": "ta key ze q/dim o mohd/se1 @umid/m o bim"}, lexicon=lexicon)
+    assert g.phonemize_line(line) == "ta key ze q/dim o mohd/s @umid/m o bim"
+
+
+def test_harakat_agrees_with_the_diphthongs_and_long_vowels_the_marks_write():
+    from ganj_reading.g2p import harakat_agrees
+    assert harakat_agrees("مَی", "mey") and harakat_agrees("هَیجا", "heyja") and harakat_agrees("حَیوان", "heyvan")
+    assert harakat_agrees("دَولت", "dol/t")                     # the ow of a bare و is o
+    assert harakat_agrees("کَندَه", "k/nde")                    # fatha before a final ه: its e
+    assert harakat_agrees("کَرِیم", "k/rim") and harakat_agrees("نُور", "nur") and harakat_agrees("لَدَی", "l/da")
+    assert not harakat_agrees("بَیان", "beyan") and harakat_agrees("بَیان", "b/yan")   # ی before ا is a consonant
+    assert not harakat_agrees("مِی", "mi") and harakat_agrees("مِی", "mey")          # the kasra is written
+
+
+def test_follow_marks_swaps_the_vowel_after_a_marked_letter():
+    # Ruled 2026-11-11: when no candidate reads the marks, the chosen one is made to
+    from ganj_reading.g2p import follow_marks
+    assert follow_marks("انگِشت", "@/ngošt") == "@/ngešt"
+    assert follow_marks("گُرسَنه", "gorsene") == "gors/ne"
+    assert follow_marks("بُد", "b/d") == "bod"
+    assert follow_marks("مَلِکِ", "molke1") == "m/leke1"        # the ezafe stays
+    assert follow_marks("شَنگُل", "š/ng/l") == "š/ngol"
+    assert follow_marks("شَمیرانُ", "š/miran") == "š/mirano"     # a missing vowel is added
+    assert follow_marks("دَور", "dur") == "dor"
+
+
+def test_follow_marks_drops_the_vowel_after_a_sukun_and_shortens_an_unwritten_long_vowel():
+    from ganj_reading.g2p import follow_marks
+    assert follow_marks("خِفتانْشْ", "x/ftan/š") == "xeftanš"
+    assert follow_marks("نتْوان", "n/t/van") == "n/tvan"
+    assert follow_marks("بِپْسَندی", "bepsandi") == "beps/ndi"
+    assert follow_marks("بِرَفت", "beraft") == "ber/ft"
+    assert follow_marks("مُلْکاً", "m/lek/n") == "molk/n"        # with its tanwin
+
+
+def test_follow_marks_reads_mey_and_va():
+    from ganj_reading.g2p import follow_marks
+    assert follow_marks("مِی", "mi") == "mey"
+    assert follow_marks("مِی‌پرستی", "mip/r/sti") == "meyp/r/sti"
+    assert follow_marks("وَ", "o") == "v/"
+
+
+def test_follow_marks_leaves_arabic_long_vowels_and_what_it_cannot_place():
+    from ganj_reading.g2p import follow_marks
+    assert follow_marks("لَدَی", "l/da") == "l/da" and follow_marks("إِلَی", "@ela") == "@ela"   # the final ی read a
+    assert follow_marks("فِی", "fi") == "fi" and follow_marks("کِی", "ki") == "ki"
+    assert follow_marks("کَندَه", "k/nde") == "k/nde"
+    assert follow_marks("بِشَوی", "bešuy") == "bešuy"            # و ی inside a word cannot be placed
+
+
+def test_follow_marks_reads_a_final_mark_unless_it_runs_into_the_next_word():
+    from ganj_reading.g2p import follow_marks
+    assert follow_marks("جَرَّبَ", "jorrbo") == "j/rr/b/"        # an Arabic case ending
+    assert follow_marks("خَطُّ", "x/tt", last_vowel=False) == "x/tt"   # «خَطُّ و خال»: the و's o
+    assert follow_marks("گُلَ", "gol", last_vowel=False) == "gol"      # «گُلَ انْدَر»: run into the alef
+
+
+def test_a_line_whose_candidates_all_misread_a_mark_follows_the_mark():
+    g = g2p({"فروزنده اخگر چون انگشت کرد": "foruz/nde @/xg/r con @/ngo$t k/rd"})
+    assert g.phonemize_line("فروزنده اخگر چون انگِشت کرد") == "foruz/nde @/xg/r con @/ngešt k/rd"
+    assert g2p({"گرسنه خفتد": "gorsene xoft/d"}).phonemize_line("گُرسَنه خفتَد") == "gors/ne xoft/d"
+
+
+def test_a_final_mark_before_vav_or_an_alef_is_left_to_the_next_word():
+    assert g2p({"خط و خال": "x/tt o xal"}).phonemize_line("خَطُّ و خال") == "x/tt o xal"
+    assert g2p({"گل از دست": "gol @/z d/st"}).phonemize_line("گُلَ ازْ دست") == "gol @/z d/st"

@@ -64,9 +64,12 @@ through sherpa, its highest speaker similarity to any training reciter is 0.47.
   fine-tuned on 210.9 h with corrected pronunciations and the reciters' pauses marked in the labels.
 - **Pronunciation.** The labels follow the reading rules of the `ganj-reading` package: ezafe, written vowel marks,
   tashdid, sukun, and the poem's metre. Hafez and part of Saadi were proofread word by word by a language model, with
-  corrections from a native reader. The rest of the verse was read by the `g2p/` model.
-- **Letters to phonemes (`g2p/`).** Homo-GE2PE (MIT), fine-tuned on the proofread Hafez and Saadi lines. It reads
-  verse; prose is read by the original Homo-GE2PE. See `g2p/NOTICE.md`.
+  corrections from a native reader. The rest of the verse was read by the 1.0.0 version of the `g2p/` model.
+- **Letters to phonemes (`g2p/`).** Homo-GE2PE (MIT), fine-tuned on about 115,000 lines proofread word by word by a
+  language model, with the native reader's corrections: the recorded verse of Hafez, Saadi, Ferdowsi, Molavi, Attar,
+  Khayyam and other poets, and part of the unrecorded verse of Hafez, Saadi, Molavi and Ferdowsi (since 1.2.0; the
+  1.0.0 version learned from Hafez and Saadi only). It reads verse; prose is read by the original Homo-GE2PE. See
+  `g2p/NOTICE.md`.
 - **Voice prompt.** 7.5 s from a recitation by امیرحسین عظیمی, which is not in the training data, cleaned and
   disguised (formants, pitch and spectrum shifted).
 - **Vocoder.** Vocos `charactr/vocos-mel-24khz` (MIT), unchanged. The phone model uses sherpa-onnx's ONNX export of

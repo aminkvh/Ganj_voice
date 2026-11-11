@@ -153,19 +153,39 @@ def long_a_written(word: str, ph: str) -> bool:
     return _strip_ezafe(ph, base).count("a") <= n
 
 
+YE_AST = "ی‌است"
+
+
+def contract_ast(words: list, pw: list, metre: Optional[str] = None) -> list:
+    """Ruled 2026-11-09: a word written with ی‌است is read -ist (زبانی‌است z/banist, not z/bani/st),
+    unless the line then fails a metre it scans in. A one-letter stem keeps its ast (نی‌است, کی‌است)."""
+    def one(word, ph):
+        plain = strip_harakat(word)
+        if plain.endswith(YE_AST) and len(plain) - len(YE_AST) >= 2:
+            for tail in ("i/st", "i@/st"):
+                if ph.endswith(tail):
+                    return ph[: -len(tail)] + "ist"
+        return ph
+    out = [one(w, r) for w, r in zip(words, pw)]
+    if out != pw and metre and scans(" ".join(pw), metre) and not scans(" ".join(out), metre):
+        return pw
+    return out
+
+
 def written_ezafe(word: str) -> bool:
     """A final kasra or هٔ; Unicode writes a kasra before a shadda on the same letter (حقِّ = ح ق ِ ّ)."""
     return word.endswith(("ه" + HAMZA_ABOVE, KASRA, KASRA + SHADDA))
 
 
 def harakat_agrees(word: str, ph: str) -> bool:
-    """The written short vowels (a final kasra is the ezafe) occur in order among the phonemes' short vowels, and every
-    letter carrying a shadda appears doubled (شکّر → š/kk/r)."""
+    """The written short vowels (a final kasra is the ezafe) occur in order among the phonemes' vowels, each as a vowel
+    that reads it (mark_options: مَی mey, کَرِیم k/rim), and every letter carrying a shadda appears doubled (شکّر →
+    š/kk/r)."""
     body = _strip_ezafe(ph)
     word = word[:-2] + SHADDA if word.endswith(KASRA + SHADDA) else word   # حقِّ: the kasra is the ezafe
-    marks = [MARK_VOWEL[c] for c in word.rstrip("\u0650") if c in MARK_VOWEL]
-    it = iter(c for c in body if c in SHORT_VOWELS)
-    if not all(m in it for m in marks):
+    lm = _letters(word)
+    it = iter(c for c in body if c in VOWELS)
+    if not all(any(c in mark_options(lm, i, v) for c in it) for i, v in _marked(lm)):
         return False
     letters = [c for c in word if not HARAKAT.search(c) or c == SHADDA]
     doubled = [LETTER_PHONE.get(letters[i - 1]) for i, c in enumerate(letters) if c == SHADDA and i > 0]
@@ -199,6 +219,163 @@ def _sukun_agrees(word: str, ph: str) -> bool:
 
 
 NO_GEMINATE = {"v", "y", "h", "@"}  # و ی ه ع/ء: often vowels or silent in writing, too ambiguous to place
+
+# Reading the written marks (ruled 2026-11-11): each letter with its marks, the vowels that read a mark, and the repair
+ZWNJ, ZWJ = "\u200c", "\u200d"
+ALEFS, YE, HE = "اأإآ", "ی", "ه"
+VOWELS = SHORT_VOWELS + "aiu"
+MEY = "م"  # مِی is mey (the kasra is written: never mi); کِی دِی نِی are read either way, فِی لِی هِی are Arabic i
+
+
+def _letters(word: str) -> list:
+    """[letter, its marks, starts a morpheme, ends a morpheme] for each letter of the word; a ZWNJ ends a morpheme."""
+    out, start = [], True
+    for c in word:
+        if c == ZWNJ:
+            if out:
+                out[-1][3] = True
+            start = True
+        elif c == ZWJ:
+            continue
+        elif unicodedata.category(c) == "Mn":
+            if out:
+                out[-1][1] += c
+        else:
+            out.append([c, "", start, False])
+            start = False
+    if out:
+        out[-1][3] = True
+    return out
+
+
+def _mark_vowel(marks: str):
+    return next((MARK_VOWEL[c] for c in marks if c in MARK_VOWEL), None)
+
+
+def _marked(lm: list) -> list:
+    """(letter index, vowel) for each letter written with a short vowel; a kasra on the last letter is the ezafe."""
+    out = [(i, _mark_vowel(m)) for i, (_, m, _, _) in enumerate(lm) if _mark_vowel(m)]
+    return out[:-1] if out and out[-1] == (len(lm) - 1, "e") else out
+
+
+def _bare(lm: list, i: int) -> bool:
+    """Letter i has no vowel mark, or only the ezafe's kasra on the last letter (مَیِ)."""
+    v = _mark_vowel(lm[i][1])
+    return v is None or (v == "e" and i == len(lm) - 1)
+
+
+def _semivowel(lm: list, i: int, letter: str) -> bool:
+    """Letter i + 1 is a bare ی/و (letter) followed by no ا and no final ی/و: the ey of هَیجا and حَیوان, the ow of دَولت
+    (not the consonant of بَیان، بِشَوی)."""
+    if i + 1 >= len(lm) or lm[i + 1][0] != letter or not _bare(lm, i + 1):
+        return False
+    if i + 2 >= len(lm) or lm[i + 1][3]:
+        return True
+    n = lm[i + 2]
+    return n[0] not in "اآ" and not (n[0] in YE + VAV and n[3])
+
+
+def _mey(lm: list, i: int) -> bool:
+    """مِی as a whole morpheme (مِی، مِی‌پرستی)."""
+    return lm[i][2] and lm[i][0] == MEY and _semivowel(lm, i, YE) and lm[i + 1][3]
+
+
+def mark_options(lm: list, i: int, v: str) -> set:
+    """The vowels that read the mark v on letter i of _letters(word): fatha / (ey before a bare ی, the ow of a bare و as
+    o, a before ا or the final ی of لَدَی, the e of a final ه as in کَندَه), kasra e (the long i of a bare ی after it, as
+    in کَرِیم; مِی is ey), damma o (u before a bare و); a small alef on the letter writes a."""
+    after = lm[i + 1][0] if i + 1 < len(lm) else ""
+    final = i + 1 < len(lm) and lm[i + 1][3]
+    out = {v, "a"} if SMALL_ALEF in lm[i][1] else {v}
+    if v == "/":
+        if after in ALEFS:
+            out.add("a")
+        elif _semivowel(lm, i, YE):
+            out |= {"e", "a"} if final else {"e"}
+        elif _semivowel(lm, i, VAV):
+            out.add("o")
+        elif after == HE and final:
+            out.add("e")
+    elif v == "e" and after == YE and _bare(lm, i + 1) and not _mey(lm, i):
+        out.add("i")
+    elif v == "o" and after == VAV and _bare(lm, i + 1):
+        out.add("u")
+    return out
+
+
+def _place(lm: list, i: int, ph: str):
+    """The index in ph of letter i's consonant (the second of a doubled one), or None: the word's first letter is ph[0]
+    when it sounds as written (an alef as @); the others are found at their occurrence counted among same-sounding
+    letters, as in geminate(), and و ی ه ع/ء cannot be placed."""
+    if i == 0:
+        p = "@" if lm[0][0] in ALEFS else LETTER_PHONE.get(lm[0][0])
+        if not p or not ph.startswith(p):
+            return None
+        j = 0
+    else:
+        p = LETTER_PHONE.get(lm[i][0])
+        if not p or p in NO_GEMINATE:
+            return None
+        k = sum(1 for x in lm[:i] if LETTER_PHONE.get(x[0]) == p)
+        pos = [n for n, x in enumerate(ph) if x == p]
+        if k >= len(pos):
+            return None
+        j = pos[k]
+    return j + 1 if ph[j + 1:j + 2] == ph[j] else j
+
+
+def _read_mark(lm: list, i: int, v: str, ph: str, j: int, ezafe: bool) -> str:
+    """ph with the vowel after letter i (its consonant at j) read as the mark v."""
+    nxt = ph[j + 1:j + 2]
+    after = lm[i + 1][0] if i + 1 < len(lm) else ""
+    final = i + 1 < len(lm) and lm[i + 1][3]
+    if nxt and nxt in mark_options(lm, i, v):
+        return ph
+    if v == "o" and after == HE and final and nxt == "e":
+        return ph  # سَعدُه: the Arabic -uh, not a vowel to swap
+    if nxt and nxt in SHORT_VOWELS:
+        return ph[:j + 1] + v + ph[j + 2:]
+    if nxt in ("a", "i", "u"):
+        if nxt == "i" and _semivowel(lm, i, YE) and (_mey(lm, i) or (v == "/" and (not final or lm[i][2]))):
+            return ph[:j + 1] + ("e" if ph[j + 2:j + 3] == "y" else "ey") + ph[j + 2:]  # مِی mey, هَیجا heyja
+        if nxt == "u" and v == "/" and _semivowel(lm, i, VAV):
+            return ph[:j + 1] + "o" + ph[j + 2:]  # أَو: the ow of a bare و
+        written = {"a": after in ALEFS or SMALL_ALEF in lm[i][1] or (after == YE and final),
+                   "i": after == YE, "u": after == VAV}[nxt]
+        return ph if written else ph[:j + 1] + v + ph[j + 2:]  # بِپْسَندی bepsandi -> beps/ndi
+    if i < len(lm) - 1 or not ezafe:
+        return ph[:j + 1] + v + ph[j + 1:]  # no vowel read after the letter
+    return ph
+
+
+def follow_marks(word: str, ph: str, last_vowel: bool = True) -> str:
+    """Ruled 2026-11-11 (training labels and test couplets went against their marks when no candidate read them):
+    the vowel after each marked letter becomes the mark (a short vowel swapped, a missing one
+    added, a long vowel no letter writes shortened), a sukun drops the vowel after its letter, مِی is mey and وَ is va.
+    A letter that cannot be placed (_place) is left, and a word that still does not agree keeps its reading.
+    last_vowel=False leaves the last letter's mark to the next word («خَطُّ و خال», «گُلَ انْدَر»); the لله of Allah
+    keeps its long a."""
+    if harakat_agrees(word, ph) or "لله" in strip_harakat(word):
+        return ph
+    if strip_harakat(word) == VAV and _mark_vowel(word) == "/":
+        return "v/"
+    body = _strip_ezafe(ph)
+    lm = _letters(word)
+    vowels = dict(_marked(lm))
+    out = body
+    for i, (_, marks, _, _) in enumerate(lm):
+        quiet, v = SUKUN in marks, vowels.get(i)
+        if not quiet and (not v or (i == len(lm) - 1 and not last_vowel)):
+            continue
+        j = _place(lm, i, out)
+        if j is None:
+            continue
+        if quiet:
+            out = out[:j + 1] + out[j + 2:] if out[j + 1:j + 2] in tuple(SHORT_VOWELS) else out
+        else:
+            out = _read_mark(lm, i, v, out, j, body != ph)
+    new = out + ph[len(body):]
+    return new if harakat_agrees(word, new) else ph
 
 
 def _n_words(raw) -> int:
@@ -419,7 +596,9 @@ class G2P:
                       and not written_ezafe(w) else r
                       for i, (w, p, r) in enumerate(zip(words, plain, pw))]
                 pw = [_strip_ezafe(r, p) if w.endswith(SUKUN) else r for w, p, r in zip(words, plain, pw)]  # دستْ: no ezafe
+                pw = no_ezafe_before_pause(text, words, plain, pw)  # «به خواب، دو چشم»: xab
                 pw[-1] = _strip_ezafe(pw[-1], plain[-1])  # a hemistich ends a phrase: no ezafe across the line break
+                pw = contract_ast(words, pw, metre if metred else None)
             # rank: aligned, scans the metre, agrees with the written vowel marks, then (when none aligns) the word count
             # closest to the text's — a refrain written 7 times for 4 loses to one written 5 times; ties keep the model's order
             key = (aligned, aligned and metred and scans(" ".join(pw), metre),
@@ -432,6 +611,10 @@ class G2P:
         pw, aligned = best
         if aligned:  # last resort, after ranking: a candidate that already doubles the shadda letter wins above
             pw = [tanwin(w, small_alef(w, geminate(w, r) if SHADDA in w else r)) for w, r in zip(words, pw)]
+            # and one that reads the marks; a mark on the last letter before و or an alef runs into that word
+            last = [i == len(words) - 1 or not (plain[i + 1] == VAV or plain[i + 1].startswith(tuple(ALEFS)))
+                    for i in range(len(words))]
+            pw = [follow_marks(w, r, lv) for w, r, lv in zip(words, pw, last)]
         else:
             self.mismatches += 1
         logged = zip(words, pw) if aligned else ((w, "?") for w in words)
@@ -510,6 +693,17 @@ def punctuation_after_words(line: str) -> list:
         elif out and p:
             out[-1] += p
     return out
+
+
+def no_ezafe_before_pause(line: str, words: list, plain: list, pw: list) -> list:
+    """Ruled 2026-11-10 («تا کی ز قدیم و مُحدَث، اومیدم و بیم»): a word right before a typed pause mark ends a phrase
+    and takes no ezafe; a written kasra keeps it. Training labels had one there («به خواب، دو چشم»
+    xabe1, «مَرد، اَحوَل» m/rde1). A mark typed against the next word («گفت !هر») belongs to the word before it. Returns a
+    new list; a line whose marks do not line up with its words is left as it is."""
+    marks = punctuation_after_words("".join(f" {ch} " if ch in SHORT_MARKS + LONG_MARKS else ch for ch in line))
+    if len(marks) != len(pw):
+        return list(pw)
+    return [_strip_ezafe(r, p) if m and not written_ezafe(w) else r for w, p, r, m in zip(words, plain, pw, marks)]
 
 
 def read_vav(line: str, pw: list, prose: bool) -> list:
