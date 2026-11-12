@@ -5,6 +5,17 @@ trained from scratch on Ganjoor recitations (used with Ganjoor's consent) and Ma
 recording, so that it is close to no corpus reciter. The model itself (weights, voice prompt, token list, lexicon) is
 described in [models/README.md](models/README.md).
 
+## Which download do I want?
+
+| You want to | Use | Download |
+|---|---|---|
+| read with the best quality, in Python with a GPU | the **full model** `ganj-zip-d4h` (64 steps, several takes per line) | release [v1.2.0](https://github.com/aminkvh/Ganj_voice/releases/tag/v1.2.0), or the top level and `g2p/` on [Hugging Face](https://huggingface.co/aminkvh/Ganj_voice) |
+| read on a phone or laptop CPU, as the Ganj app does | the **distilled model** (4 to 8 steps, ONNX for sherpa-onnx) | release [phone-1.2.0](https://github.com/aminkvh/Ganj_voice/releases/tag/phone-1.2.0), or [`ganj-zip-distill-1.2.0/`](https://huggingface.co/aminkvh/Ganj_voice/tree/main/ganj-zip-distill-1.2.0) |
+
+Older app downloads stay online unchanged, because installed apps fetch them: release `phone-v1` and Hugging Face
+`ganj-zip-distill/` (voice 1.1.0, used by Ganj 1.6.0), and release v1.1.0 (`ganj-zip-distill.zip`). Version 1.2.0
+brought a better letters-to-phonemes model; the voice itself is unchanged since 1.1.0.
+
 ## Use the voice
 
 Download the model folder `ganj-zip-d4h` from [Releases](https://github.com/aminkvh/Ganj_voice/releases) or
